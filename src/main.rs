@@ -52,7 +52,7 @@ fn count_matching_dirs(pattern: &str) -> Result<usize, Error> {
     // Use glob to match directories based on the given pattern
     for entry in glob(pattern).unwrap() {
         match entry {
-            Ok(path) if path.is_dir() => count += 1, // Increment the count for directories
+            Ok(path) if path.is_file() => count += 1, // Increment the count for directories
             _ => {} // Ignore non-directories or errors
         }
     }
@@ -187,6 +187,8 @@ async fn mongo_dump(username: &str, password: &str, auth_db: &str, db_name: &str
 }
 
 fn setup_s3(access_key: &str, secret_key: &str, region: &str) -> Result<(), Box<dyn std::error::Error>> {
+    fs::create_dir_all(format!("{}/.aws", std::env::var("HOME").unwrap()))?;
+
     // Write .aws credentials file
     let credentials = format!("[default]\naws_access_key_id = {}\naws_secret_access_key = {}", access_key, secret_key);
     let credentials_path = format!("{}/.aws/credentials", std::env::var("HOME").unwrap());
