@@ -142,6 +142,7 @@ async fn upload_to_s3(s3_profile: &str, bucket: &str, file_path: &str, s3_key: &
         .put_object()
         .bucket(bucket)
         .key(s3_key)
+        .storage_class(aws_sdk_s3::types::StorageClass::StandardIa)
         .body(body.unwrap())
         .send()
         .await?;
